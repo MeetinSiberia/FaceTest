@@ -48,8 +48,11 @@ public class TestRun3 {
 		JLabel label2 = new JLabel("2");
 		JLabel label3 = new JLabel("3");
 		JLabel label4 = new JLabel("4");
+		
 		JFileChooser fc1 = new JFileChooser();
 		JFileChooser fc2 = new JFileChooser();
+		JLabel lbltest1 = new JLabel("1");
+		JLabel lbltest2 = new JLabel("2");
 		
 		JLabel lblfc1 = new JLabel("1");
 		JLabel lblfc2 = new JLabel("2");
@@ -58,6 +61,15 @@ public class TestRun3 {
 		JLabel lblfc5 = new JLabel("5");
 		JLabel lblfc6 = new JLabel("6");
 		JLabel lblfc7 = new JLabel("7");
+		
+		int returnVal;
+		FImage image3;
+		FImage image4; 
+		JFrame f = null; 
+		
+		DoubleFV testFeature2;
+        String bestPerson = null;
+        double minDistance = Double.MAX_VALUE;
 		
 		VFSGroupDataset <FImage> dataset = 
 			    new VFSGroupDataset <FImage> ("zip:/Users/Phoenix/OpenIMAJ-Phoenix/src/main/java/ok/att_faces.zip",ImageUtilities.FIMAGE_READER);
@@ -154,64 +166,89 @@ public class TestRun3 {
 
 	    
     	//test Obama's face
-	    text = "/Users/Phoenix/OpenIMAJ-Phoenix/src/main/java/ok/Obama/6.png";
-		FImage image4 = ImageUtilities.readF(new File(text));				
-		label1 = new JLabel(new ImageIcon(text));
-    	System.out.println(text);
-        lblfc6.setText("Test 1: " + text);     	    	
+	    //text = "/Users/Phoenix/OpenIMAJ-Phoenix/src/main/java/ok/Obama/6.png";
+		//FImage image4 = ImageUtilities.readF(new File(text));				
+		//label1 = new JLabel(new ImageIcon(text));
+    	//System.out.println(text);
+        //lblfc6.setText("Test 1: " + text);     	    	
 		
-		
-    	//DisplayUtilities.display(image4);
-		DoubleFV testFeature2 = eigen.extractFeature(image4);
-        String bestPerson = null;
-        double minDistance = Double.MAX_VALUE;
-        System.out.println(features.keySet().size());
-        for (final String person1 : features.keySet()) {
-            for (final DoubleFV fv : features.get(person1)) {
-            	if(fv==null) {
-            		continue;
-            	}
-                
-                double distance = fv.compare(testFeature2, DoubleFVComparison.EUCLIDEAN);
-                
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    bestPerson = person1;
+        returnVal = fc1.showOpenDialog(panel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc1.getSelectedFile();
+            image4 = ImageUtilities.readF(file);
+            String text1 = file.toString();
+    		label1 = new JLabel(new ImageIcon(text1));
+        	System.out.println(text1);
+            lblfc6.setText("Test 1: " + text1); 
+            lbltest1.setText("Test Face 1: " + text1);
+        	DisplayUtilities.display(image4);
+    		//testFeature2 = eigen.extractFeature(image4);
+    		testFeature2 = eigen.extractFeature(getface(image4).get(0));
+            bestPerson = null;
+            minDistance = Double.MAX_VALUE;
+            System.out.println(features.keySet().size());
+            for (final String person1 : features.keySet()) {
+                for (final DoubleFV fv : features.get(person1)) {
+                	if(fv==null) {
+                		continue;
+                	}
+                    
+                    double distance = fv.compare(testFeature2, DoubleFVComparison.EUCLIDEAN);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        bestPerson = person1;
+                    }
                 }
             }
+            System.out.println("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");
+            label3.setText("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");
+
+
         }
-        System.out.println("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");
-        label3.setText("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");
+		
         
         
         //test Mike's face
-        text = "/Users/Phoenix/OpenIMAJ-Phoenix/src/main/java/ok/MikeTest/2.jpg";
-		FImage image3 = ImageUtilities.readF(new File(text));	
-		label2 = new JLabel(new ImageIcon(text));
-    	System.out.println(text);
-        lblfc7.setText("Test 2: " + text); 
+        //text = "/Users/Phoenix/OpenIMAJ-Phoenix/src/main/java/ok/MikeTest/3.jpg";
+		//FImage image3 = ImageUtilities.readF(new File(text));	
+		//label2 = new JLabel(new ImageIcon(text));
+    	//System.out.println(text);
+        //lblfc7.setText("Test 2: " + text); 
+        
+        returnVal = fc2.showOpenDialog(panel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc2.getSelectedFile();
+            image3 = ImageUtilities.readF(file);
+            String text1 = file.toString();
+    		label2 = new JLabel(new ImageIcon(text1));
+        	System.out.println(text1);
+            lblfc7.setText("Test 2: " + text1); 
+            lbltest2.setText("Test Face 2: " + text1);
+        	DisplayUtilities.display(image3);
+        	//DisplayUtilities.display(image3);
+    		testFeature2 = eigen.extractFeature(getface(image3).get(0));
+    		bestPerson = null;
+    		minDistance = Double.MAX_VALUE;
+    		System.out.println(features.keySet().size());
+    		for (final String person1 : features.keySet()) {
+    		    for (final DoubleFV fv : features.get(person1)) {
+    				if(fv==null) {
+    					continue;
+    				}
+    				double distance = fv.compare(testFeature2, DoubleFVComparison.EUCLIDEAN);
+    				if (distance < minDistance) {
+    				    minDistance = distance;
+    				    bestPerson = person1;
+    				}
+    		    }
+    		}
+    		System.out.println("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");				
+    	    label4.setText("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");
+        }
+		
+		
 
-		
-		
-    	//DisplayUtilities.display(image3);
-		testFeature2 = eigen.extractFeature(getface(image3).get(0));
-		bestPerson = null;
-		minDistance = Double.MAX_VALUE;
-		System.out.println(features.keySet().size());
-		for (final String person1 : features.keySet()) {
-		    for (final DoubleFV fv : features.get(person1)) {
-				if(fv==null) {
-					continue;
-				}
-				double distance = fv.compare(testFeature2, DoubleFVComparison.EUCLIDEAN);
-				if (distance < minDistance) {
-				    minDistance = distance;
-				    bestPerson = person1;
-				}
-		    }
-		}
-		System.out.println("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");				
-	    label4.setText("\tguess: " + bestPerson+ "\t: " + (int)((20/(20+minDistance))*100)+ "% ");
 	
 	    
         panel.add(lblfc1);
@@ -219,6 +256,7 @@ public class TestRun3 {
         panel.add(lblfc3);
         panel.add(lblfc4);
         panel.add(lblfc5);
+        
 	    panel.add(label1);
 	    panel.add(label3);
         panel.add(lblfc6);
